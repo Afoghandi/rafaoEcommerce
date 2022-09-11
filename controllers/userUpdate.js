@@ -1,12 +1,12 @@
 import express from 'express';
-import User from '../models/User.js';
 
-import { verifyTokenAndAuthorization } from '../middleware/verifyToken.js';
+import User from '../models/User.js';
 
 const router = express.Router();
 
-//UPDATE
-router.put('/:id', verifyTokenAndAuthorization, async (req, res) => {
+//UPDATE USER DETAILS
+
+export const updateUserDetails = async (res, req) => {
 	if (req.body.password) {
 		req.body.password = CryptoJS.AES.encrypt(
 			req.body.password,
@@ -25,5 +25,5 @@ router.put('/:id', verifyTokenAndAuthorization, async (req, res) => {
 	} catch (err) {
 		res.status(500).json({ message: err });
 	}
-});
+};
 export default router;
