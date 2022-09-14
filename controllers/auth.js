@@ -11,7 +11,7 @@ export const register = async (req, res) => {
 
 	try {
 		const existingUser = await User.findOne({ email });
-		if (username)
+		if (!username)
 			return res
 				.status(400)
 				.json({ message: `Username not available, Please find a unique one` });
