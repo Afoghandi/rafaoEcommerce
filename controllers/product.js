@@ -30,7 +30,7 @@ export const updateProduct = async (req, res) => {
 
 			{ new: true }
 		);
-		res.status(200).json(updateProduct);
+		res.status(200).json(updatedProduct);
 	} catch (err) {
 		res.status(500).json({ message: err });
 	}
@@ -54,7 +54,7 @@ export const getSingleProduct = async (req, res) => {
 	try {
 		res.status(200).json(product);
 	} catch (err) {
-		res.status(500).json({ message: err });
+		res.status(500).json({ message: err.message });
 	}
 };
 
