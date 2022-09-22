@@ -4,7 +4,7 @@ import Annoucement from '../../components/annoucements/Annoucement';
 import Footer from '../../components/footer/Footer';
 import Navbar from '../../components/navbar/Navbar';
 import Newsletter from '../../components/newsletter/Newsletter';
-import Products from '../../components/products/Product';
+import Products from '../../components/products/Products';
 import {
 	Container,
 	FilterContainer,
@@ -33,7 +33,7 @@ const ProductList = () => {
 		<Container>
 			<Navbar />
 			<Annoucement />
-			<Title> Dresses</Title>
+			<Title> {cat}</Title>
 			<FilterContainer>
 				<Filter>
 					<FilterText> Filter Products: </FilterText>{' '}

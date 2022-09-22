@@ -3,6 +3,8 @@ import Annoucement from '../../components/annoucements/Annoucement';
 import Footer from '../../components/footer/Footer';
 import Navbar from '../../components/navbar/Navbar';
 import Newsletter from '../../components/newsletter/Newsletter';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import {
 	Container,
@@ -24,49 +26,66 @@ import {
 	Amount,
 	Button,
 } from './styles/product';
+import { publicRequest } from '../../requestMethods';
 
 const Products = () => {
+	const location = useLocation();
+	const id = location.pathname.split('/')[2];
+	const [product, setProduct] = useState({});
+	const [quantity, setQuantity] = useState(1);
+
+	const handleQuantity = (type) => {
+		if (type === 'dec') {
+			quantity > 1 && setQuantity(quantity - 1);
+		} else {
+			setQuantity(quantity + 1);
+		}
+	};
+
+	useEffect(() => {
+		const getProduct = async () => {
+			try {
+				const res = await publicRequest.get(`/products/find/${id}`);
+				setProduct(res.data);
+			} catch (err) {}
+		};
+		getProduct();
+	}, [id]);
+
+	const { img, title, desc, price, color, size } = product;
 	return (
 		<Container>
 			<Navbar />
 			<Annoucement />
 			<Wrapper>
 				<ImgContainer>
-					<Image src='https://4.imimg.com/data4/QI/NW/MY-36740590/mens-suit-500x500.jpg' />
+					<Image src={img} />
 				</ImgContainer>
 				<InfoContainer>
-					<Title>Denim Jump Suit</Title>
-					<Desc>
-						{' '}
-						Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque,
-						labore quisquam deserunt nemo quas voluptatum sint earum amet
-						provident officia ab porro libero quos magnam explicabo sed! Libero,
-						sequi nulla!{' '}
-					</Desc>
-					<Price> £20</Price>
+					<Title>{title}</Title>
+					<Desc>{desc}</Desc>
+					<Price> £{price}</Price>
 					<FilterContainer>
 						<Filter>
 							<FilterTitle>Color</FilterTitle>
-							<FilterColor color='black' />
-							<FilterColor color='darkblue' />
-							<FilterColor color='gray' />
+							{color?.map((c) => (
+								<FilterColor color={c} key={c} />
+							))}
 						</Filter>
 						<Filter>
 							<FilterTitle>Size</FilterTitle>
 							<FilterSize>
-								<FilterSizeOption>XS</FilterSizeOption>
-								<FilterSizeOption>S</FilterSizeOption>
-								<FilterSizeOption>M</FilterSizeOption>
-								<FilterSizeOption>L</FilterSizeOption>
-								<FilterSizeOption>XL</FilterSizeOption>
+								{size?.map((s) => (
+									<FilterSizeOption key={s}>{s} </FilterSizeOption>
+								))}
 							</FilterSize>
 						</Filter>
 					</FilterContainer>
 					<AddContainer>
 						<AmountContainer>
-							<Remove />
-							<Amount>1</Amount>
-							<Add />
+							<Remove onClick={() => handleQuantity('dec')} />
+							<Amount>{quantity} </Amount>
+							<Add onClick={() => handleQuantity('inc')} />
 						</AmountContainer>
 						<Button>ADD TO CART</Button>
 					</AddContainer>

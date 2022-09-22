@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import {
 	FavoriteBorderOutlined,
 	SearchOutlined,
@@ -6,7 +7,7 @@ import {
 import React from 'react';
 import { Container, Circle, Image, Info, Icon } from './styles/productitem';
 
-const ProductItem = ({ item }) => {
+const Product = ({ item }) => {
 	return (
 		<Container>
 			<Circle />
@@ -16,7 +17,9 @@ const ProductItem = ({ item }) => {
 					<ShoppingCartOutlined />
 				</Icon>
 				<Icon>
-					<SearchOutlined />
+					<Link to={`/product/${item._id}`}>
+						<SearchOutlined />
+					</Link>
 				</Icon>
 				<Icon>
 					<FavoriteBorderOutlined />
@@ -26,4 +29,4 @@ const ProductItem = ({ item }) => {
 	);
 };
 
-export default ProductItem;
+export default Product;

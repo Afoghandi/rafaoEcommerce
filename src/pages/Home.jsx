@@ -4,7 +4,7 @@ import Categories from '../components/categories/Categories';
 import Footer from '../components/footer/Footer';
 import Navbar from '../components/navbar/Navbar';
 import Newsletter from '../components/newsletter/Newsletter';
-import Product from '../components/products/Product';
+import Products from '../components/products/Products';
 import Slider from '../components/slider/Slider';
 
 const Home = () => {
@@ -14,7 +14,7 @@ const Home = () => {
 			<Navbar />
 			<Slider />
 			<Categories />
-			<Product />
+			<Products />
 			<Newsletter />
 			<Footer />
 		</div>

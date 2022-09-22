@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Cart from './pages/cart/Cart';
 import Login from './pages/login/Login';
-import Product from './pages/products/Products';
+import Product from './pages/product/Product';
 import ProductList from './pages/productlist/ProductList';
 import Register from './pages/register/Register';
 import Home from './pages/Home';
@@ -11,17 +11,14 @@ const App = () => {
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route exact path='/' element={<Home />} />
+				<Route path='/' element={<Home />} />
 				<Route path='/products/:category' element={<ProductList />} />
 				<Route path='/product/:id' element={<Product />} />
 				<Route path='/cart' element={<Cart />} />
+				<Route path='/login' element={user ? <Navigate to='/' /> : <Login />} />
 				<Route
-					path='/register'
-					element={user ? <Navigate to='/' replace /> : <Register />}
-				/>
-				<Route
-					path='/login'
-					element={user ? <Navigate to='/' replace /> : <Login />}
+					path='/Register'
+					element={user ? <Navigate to='/' /> : <Register />}
 				/>
 			</Routes>
 		</BrowserRouter>
