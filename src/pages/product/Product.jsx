@@ -27,21 +27,34 @@ import {
 	Button,
 } from './styles/product';
 import { publicRequest } from '../../requestMethods';
+import { addProduct } from '../../redux/cartRedux';
+import { useDispatch } from 'react-redux';
 
 const Products = () => {
 	const location = useLocation();
 	const id = location.pathname.split('/')[2];
 	const [product, setProduct] = useState({});
 	const [quantity, setQuantity] = useState(1);
+	const [color, setColor] = useState('');
+	const [size, setSize] = useState('');
+	const dispatch = useDispatch();
 
+	//Increases or Decreases quantities of product.
 	const handleQuantity = (type) => {
 		if (type === 'dec') {
+			//prevents quantity from being less than one
 			quantity > 1 && setQuantity(quantity - 1);
 		} else {
 			setQuantity(quantity + 1);
 		}
 	};
 
+	//Adds all information about the product to the cart as one single object
+	const handleClick = () => {
+		dispatch(addProduct({ ...product, quantity, color, size }));
+	};
+
+	//Fetches product information from DB
 	useEffect(() => {
 		const getProduct = async () => {
 			try {
@@ -52,7 +65,8 @@ const Products = () => {
 		getProduct();
 	}, [id]);
 
-	const { img, title, desc, price, color, size } = product;
+	const { img, title, desc, price } = product;
+
 	return (
 		<Container>
 			<Navbar />
@@ -68,14 +82,14 @@ const Products = () => {
 					<FilterContainer>
 						<Filter>
 							<FilterTitle>Color</FilterTitle>
-							{color?.map((c) => (
-								<FilterColor color={c} key={c} />
+							{product.color?.map((c) => (
+								<FilterColor color={c} key={c} onClick={() => setColor(c)} />
 							))}
 						</Filter>
 						<Filter>
 							<FilterTitle>Size</FilterTitle>
-							<FilterSize>
-								{size?.map((s) => (
+							<FilterSize onChange={(e) => setSize(e.target.value)}>
+								{product.size?.map((s) => (
 									<FilterSizeOption key={s}>{s} </FilterSizeOption>
 								))}
 							</FilterSize>
@@ -87,7 +101,7 @@ const Products = () => {
 							<Amount>{quantity} </Amount>
 							<Add onClick={() => handleQuantity('inc')} />
 						</AmountContainer>
-						<Button>ADD TO CART</Button>
+						<Button onClick={handleClick}>ADD TO CART</Button>
 					</AddContainer>
 				</InfoContainer>
 			</Wrapper>
