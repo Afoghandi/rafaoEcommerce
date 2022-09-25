@@ -11,7 +11,7 @@ import { verifyTokenAndAdmin } from '../middleware/verifyToken.js';
 
 const router = express.Router();
 
-// END POINT: http://localhost:6000/api/products
+// END POINT: http://localhost:5000/api/products
 
 router.post('/', verifyTokenAndAdmin, addProduct);
 
