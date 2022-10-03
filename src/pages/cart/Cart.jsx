@@ -1,5 +1,9 @@
 import { Add, Remove } from '@material-ui/icons';
-import React from 'react';
+import { useSelector } from 'react-redux';
+import StripeCheckout from 'react-stripe-checkout';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import Annoucement from '../../components/annoucements/Annoucement';
 import Footer from '../../components/footer/Footer';
 import Navbar from '../../components/navbar/Navbar';
@@ -34,7 +38,31 @@ import {
 	Button,
 } from './styles/cart';
 
+import { userRequest } from '../../requestMethods';
+
 const Cart = () => {
+	const cart = useSelector((state) => state.cart);
+	const [stripeToken, setStripeToken] = useState(null);
+	const navigate = useNavigate();
+
+	const KEY = process.env.REACT_APP_STRIPE;
+
+	const onToken = (token) => {
+		setStripeToken(token);
+	};
+	useEffect(() => {
+		const makeRequest = async () => {
+			try {
+				const res = await userRequest.post('/checkout/payment', {
+					tokenId: stripeToken.id,
+					amount: cart.total * 100,
+				});
+				navigate('/success', { state: { data: res.data } });
+			} catch (error) {}
+		};
+		stripeToken && cart.total >= 1 && makeRequest();
+	}, [stripeToken, cart.total, navigate]);
+
 	return (
 		<Container>
 			<Navbar />
@@ -51,63 +79,45 @@ const Cart = () => {
 				</Top>
 				<Bottom>
 					<Info>
-						<Product>
-							<ProductDetail>
-								<Image src='https://contents.mediadecathlon.com/p1977887/k$16a7c875ce44097c8edf5afa44e73923/sq/basketball-shoes-se900-blacknba-los-angeles-lakers.jpg?format=auto&f=800x0' />
-								<Details>
-									<ProductName>
-										<b>Products: </b>JESSIE THUNDER SHOES{' '}
-									</ProductName>
-									<ProductId>
-										<b>ID: </b> 989008redgkk
-									</ProductId>
-									<ProductColor color='black' />
-									<ProductSize>
-										<b>Size: 37.5</b>{' '}
-									</ProductSize>
-								</Details>
-							</ProductDetail>
-							<PriceDetail>
-								<ProductAmountContainer>
-									<Add />
-									<ProductAmount>2</ProductAmount>
-									<Remove />
-								</ProductAmountContainer>
-								<ProductPrice> £30</ProductPrice>
-							</PriceDetail>
-						</Product>
+						{cart.products.map((product) => (
+							<Product key={product._id}>
+								<ProductDetail>
+									<Image src={product.img} />
+									<Details>
+										<ProductName>
+											<b>Products: </b>
+											{product.title}
+										</ProductName>
+										<ProductId>
+											<b>ID: </b>
+											{product._id}
+										</ProductId>
+										<ProductColor color={product.color} />
+										<ProductSize>
+											<b>Size: </b>
+											{product.size}
+										</ProductSize>
+									</Details>
+								</ProductDetail>
+								<PriceDetail>
+									<ProductAmountContainer>
+										<Add />
+										<ProductAmount>{product.quantity} </ProductAmount>
+										<Remove />
+									</ProductAmountContainer>
+									<ProductPrice>
+										£{product.price * product.quantity}
+									</ProductPrice>
+								</PriceDetail>
+							</Product>
+						))}
 						<Hr />
-						<Product>
-							<ProductDetail>
-								<Image src='https://www.onudesignerwear.com/images/off-white-tape-arrows-cotton-t-shirt-black-p5319-10185_image.jpg' />
-								<Details>
-									<ProductName>
-										<b>Products: </b>White Stuff
-									</ProductName>
-									<ProductId>
-										<b>ID: </b> 989008redgkk
-									</ProductId>
-									<ProductColor color='gray' />
-									<ProductSize>
-										<b>Size: M</b>{' '}
-									</ProductSize>
-								</Details>
-							</ProductDetail>
-							<PriceDetail>
-								<ProductAmountContainer>
-									<Add />
-									<ProductAmount>2</ProductAmount>
-									<Remove />
-								</ProductAmountContainer>
-								<ProductPrice> £30</ProductPrice>
-							</PriceDetail>
-						</Product>
 					</Info>
 					<Summary>
 						<SummaryTitle>Order Summary</SummaryTitle>
 						<SummaryItem>
 							<SummaryItemText>Subtotal</SummaryItemText>
-							<SummaryItemPrice> £80.90</SummaryItemPrice>
+							<SummaryItemPrice> £{cart.total}</SummaryItemPrice>
 						</SummaryItem>
 						<SummaryItem>
 							<SummaryItemText>Estimated Shipping</SummaryItemText>
@@ -119,9 +129,20 @@ const Cart = () => {
 						</SummaryItem>
 						<SummaryItem type='total'>
 							<SummaryItemText>Total</SummaryItemText>
-							<SummaryItemPrice> £80</SummaryItemPrice>
+							<SummaryItemPrice> £{cart.total}</SummaryItemPrice>
 						</SummaryItem>
-						<Button>CHECKOUT NOW</Button>
+						<StripeCheckout
+							name='Rafa.O'
+							image='https://avatars.githubusercontent.com/u/1486366?v=4'
+							billingAddress
+							shippingAddress
+							description={`Your total is £${cart.total}`}
+							amount={cart.total * 100}
+							token={onToken}
+							stripeKey={KEY}
+						>
+							<Button>CheckOUT NOW</Button>
+						</StripeCheckout>
 					</Summary>
 				</Bottom>
 			</Wrapper>
