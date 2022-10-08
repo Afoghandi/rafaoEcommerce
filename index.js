@@ -8,6 +8,7 @@ import authRoute from './routes/auth.js';
 import productRoute from './routes/products.js';
 import cartRoute from './routes/cart.js';
 import orderRoute from './routes/order.js';
+import stripeRoute from './routes/stripe.js';
 //setting up config file
 dotenv.config({ path: 'config/config.env' });
 const app = express();
@@ -21,6 +22,7 @@ app.use('/api/auth', authRoute);
 app.use('/api/products', productRoute);
 app.use('/api/carts', cartRoute);
 app.use('/api/orders', orderRoute);
+app.use('/api/checkout', stripeRoute);
 
 app.listen(process.env.PORT || 5000, () => {
 	console.log(
